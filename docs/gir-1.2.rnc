@@ -19,7 +19,8 @@ grammar {
       (Include*
        & CInclude*
        & Package*
-       & Namespace*)
+       & Namespace*
+       & DocFormat*)
     }
 
   ## Namespace which maps metadata entries to C functionality. This a similar concept to namespace in C++, but for GObject-based C libraries
@@ -66,6 +67,15 @@ grammar {
     ## Dependant C header file which should be included in C programs
     element c:include {
       ## File name of the C header file. The path can be relative.
+      attribute name { xsd:string },
+
+      empty
+    }
+
+  DocFormat =
+    ## Format used for the included documentation.
+    element doc:format {
+      ## Name of the documentation format. For example, 'gi-docgen' or 'gtk-doc'.
       attribute name { xsd:string },
 
       empty
