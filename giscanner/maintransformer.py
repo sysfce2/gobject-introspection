@@ -59,6 +59,7 @@ from .annotationparser import (
     ANN_NOT,
     ANN_FINISH_FUNC,
     ANN_SYNC_FUNC,
+    ANN_ASYNC_FUNC,
 )
 from .annotationparser import (
     OPT_ARRAY_FIXED_SIZE,
@@ -1645,6 +1646,8 @@ method or constructor of some type."""
         if finish_func is None:
             return
         candidate_method = node.parent.get(sync_name)
+        if candidate_method is None:
+            return
         if finish_func.retval.type.ctype != candidate_method.retval.type.ctype:
             return
         param_matched = True
