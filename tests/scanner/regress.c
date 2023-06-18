@@ -4931,3 +4931,39 @@ regress_test_array_struct_in_none (RegressTestStructA *arr, gsize len)
   g_assert_cmpint (arr[2].some_int, ==, 303);
 }
 
+/**
+ * regress_test_obj_function_async:
+ *
+ */
+void
+regress_test_obj_function_async (RegressTestObj     *self,
+                                 int                 io_priority,
+                                 GCancellable       *cancellable,
+                                 GAsyncReadyCallback callback,
+                                 gpointer            user_data)
+{
+}
+
+/**
+ * regress_test_obj_function_finish:
+ *
+ */
+gboolean
+regress_test_obj_function_finish (RegressTestObj *self, GAsyncResult *res, GError **error)
+{
+  return TRUE;
+}
+
+/**
+ * regress_test_obj_function_sync:
+ *
+ */
+gboolean
+regress_test_obj_function_sync (RegressTestObj     *self,
+                                int                 io_priority,
+                                GCancellable       *cancellable,
+                                GAsyncReadyCallback callback,
+                                gpointer            user_data)
+{
+  return TRUE;
+}

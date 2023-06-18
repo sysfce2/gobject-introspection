@@ -1612,4 +1612,20 @@ void regress_test_array_struct_in_full (RegressTestStructA *arr, gsize len);
 _GI_TEST_EXTERN
 void regress_test_array_struct_in_none (RegressTestStructA *arr, gsize len);
 
+_GI_TEST_EXTERN
+void regress_test_obj_function_async (RegressTestObj     *self,
+                                      int                 io_priority,
+                                      GCancellable       *cancellable,
+                                      GAsyncReadyCallback callback,
+                                      gpointer            user_data);
+
+_GI_TEST_EXTERN
+gboolean regress_test_obj_function_finish (RegressTestObj *self, GAsyncResult *res, GError **error);
+_GI_TEST_EXTERN
+gboolean regress_test_obj_function_sync (RegressTestObj     *self,
+                                         int                 io_priority,
+                                         GCancellable       *cancellable,
+                                         GAsyncReadyCallback callback,
+                                         gpointer            user_data);
+
 #endif /* __GITESTTYPES_H__ */
