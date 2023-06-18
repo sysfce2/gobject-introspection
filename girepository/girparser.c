@@ -823,6 +823,10 @@ start_function (GMarkupParseContext *context,
   const gchar *throws;
   const gchar *set_property;
   const gchar *get_property;
+  const gchar *finish_func;
+  const gchar *async_func;
+  const gchar *sync_func;
+
   GIrNodeFunction *function;
   gboolean found = FALSE;
   ParseState in_embedded_state = STATE_NONE;
@@ -872,6 +876,9 @@ start_function (GMarkupParseContext *context,
   throws = find_attribute ("throws", attribute_names, attribute_values);
   set_property = find_attribute ("glib:set-property", attribute_names, attribute_values);
   get_property = find_attribute ("glib:get-property", attribute_names, attribute_values);
+  finish_func = find_attribute("glib:finish-func", attribute_names, attribute_values);
+  sync_func = find_attribute("glib:sync-func", attribute_names, attribute_values);
+  async_func = find_attribute("glib:async-func", attribute_names, attribute_values);
 
   if (name == NULL)
     {
@@ -897,6 +904,43 @@ start_function (GMarkupParseContext *context,
     function->deprecated = TRUE;
   else
     function->deprecated = FALSE;
+
+  function->is_async = FALSE;
+  function->async_func = NULL;
+  function->sync_func = NULL;
+  function->finish_func = NULL;
+
+  // Only asynchronous functions have a glib:sync-func defined
+  if (sync_func)
+    {
+      if (G_UNLIKELY (async_func != NULL))
+        g_error ("glib:sync-func should only be defined with asynchronous "
+                 "functions");
+
+      function->is_async = TRUE;
+      function->sync_func = g_strdup (sync_func);
+    }
+
+  // Only synchronous functions have a glib:async-func defined
+  if (async_func)
+    {
+      if (G_UNLIKELY (sync_func != NULL))
+        g_error ("glib:async-func should only be defined with synchronous "
+                 "functions");
+
+      function->is_async = FALSE;
+      function->async_func = g_strdup (async_func);
+    }
+
+  if (finish_func)
+    {
+      if (G_UNLIKELY (async_func != NULL))
+        g_error ("glib:finish-func should only be defined with asynchronous "
+                 "functions");
+
+      function->is_async = TRUE;
+      function->finish_func = g_strdup (finish_func);
+    }
 
   if (strcmp (element_name, "method") == 0 ||
       strcmp (element_name, "constructor") == 0)

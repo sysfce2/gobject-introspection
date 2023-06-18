@@ -5,6 +5,7 @@ if glib_dep.type_name() == 'pkgconfig'
     'giteststructinfo': typelibs,
     'gitestthrows': typelibs,
     'gitypelibtest': [regress_typelib],
+    'gitestasync': typelibs,
   }
 
   repository_test_env = environment()

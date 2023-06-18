@@ -101,9 +101,13 @@ struct _GIrNodeFunction
   gboolean wraps_vfunc;
   gboolean throws;
   gboolean instance_transfer_full;
+  gboolean is_async;
 
   gchar *symbol;
   char *property;
+  char *finish_func;
+  char *sync_func;
+  char *async_func;
 
   GIrNodeParam *result;
   GList *parameters;
@@ -215,8 +219,12 @@ struct _GIrNodeVFunc
   gboolean is_class_closure;
   gboolean throws;
   gboolean instance_transfer_full;
+  gboolean is_async;
 
   char *invoker;
+  char *finish_func;
+  char *sync_func;
+  char *async_func;
 
   GList *parameters;
   GIrNodeParam *result;

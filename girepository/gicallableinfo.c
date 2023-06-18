@@ -788,3 +788,221 @@ g_callable_info_invoke (GIFunctionInfo *info,
   g_base_info_unref ((GIBaseInfo *)rinfo);
   return success;
 }
+
+GICallableInfo *
+g_callable_info_get_async_function (GICallableInfo *info)
+{
+  GIRealInfo *rinfo       = (GIRealInfo *) info;
+  GIBaseInfo *container   = rinfo->container;
+  GIInfoType  parent_type = g_base_info_get_type (container);
+
+  switch (rinfo->type)
+    {
+    case GI_INFO_TYPE_FUNCTION:
+      {
+        FunctionBlob *blob;
+        blob = (FunctionBlob *) &rinfo->typelib->data[rinfo->offset];
+
+        if (blob->is_async)
+          return NULL;
+
+        if (blob->sync_or_async_index == ASYNC_SENTINEL)
+          return NULL;
+
+        if (! container)
+          return _g_info_from_entry (rinfo->repository, rinfo->typelib, blob->sync_or_async_index);
+        else if (parent_type == GI_INFO_TYPE_OBJECT)
+          return g_object_info_get_method ((GIObjectInfo *) container, blob->sync_or_async_index);
+        else if (parent_type == GI_INFO_TYPE_INTERFACE)
+          return g_interface_info_get_method ((GIInterfaceInfo *) container,
+                                              blob->sync_or_async_index);
+        else
+          return NULL;
+      }
+    case GI_INFO_TYPE_VFUNC:
+      {
+        VFuncBlob *blob;
+        blob = (VFuncBlob *) &rinfo->typelib->data[rinfo->offset];
+        if (blob->is_async)
+          return NULL;
+
+        if (blob->sync_or_async_index == ASYNC_SENTINEL)
+          return NULL;
+        if (parent_type == GI_INFO_TYPE_OBJECT)
+          return g_object_info_get_method ((GIObjectInfo *) container, blob->sync_or_async_index);
+        else if (parent_type == GI_INFO_TYPE_INTERFACE)
+          return g_interface_info_get_method ((GIInterfaceInfo *) container,
+                                              blob->sync_or_async_index);
+        else
+          return NULL;
+      }
+    case GI_INFO_TYPE_CALLBACK:
+    case GI_INFO_TYPE_SIGNAL:
+      return FALSE;
+    default:
+      g_assert_not_reached ();
+    }
+}
+
+GICallableInfo *
+g_callable_info_get_sync_function (GICallableInfo *info)
+{
+  GIRealInfo *rinfo       = (GIRealInfo *) info;
+  GIBaseInfo *container   = rinfo->container;
+  GIInfoType  parent_type = g_base_info_get_type (container);
+
+  switch (rinfo->type)
+    {
+    case GI_INFO_TYPE_FUNCTION:
+      {
+        FunctionBlob *blob;
+        blob = (FunctionBlob *) &rinfo->typelib->data[rinfo->offset];
+
+        if (! blob->is_async)
+          return NULL;
+
+        if (! container)
+          return _g_info_from_entry (rinfo->repository, rinfo->typelib, blob->sync_or_async_index);
+        else if (parent_type == GI_INFO_TYPE_OBJECT)
+          return g_object_info_get_method ((GIObjectInfo *) container, blob->sync_or_async_index);
+        else if (parent_type == GI_INFO_TYPE_INTERFACE)
+          return g_interface_info_get_method ((GIInterfaceInfo *) container,
+                                              blob->sync_or_async_index);
+        else
+          return NULL;
+      }
+    case GI_INFO_TYPE_VFUNC:
+      {
+        VFuncBlob *blob;
+        blob = (VFuncBlob *) &rinfo->typelib->data[rinfo->offset];
+        if (! blob->is_async)
+          return NULL;
+
+        if (blob->sync_or_async_index == ASYNC_SENTINEL)
+          return NULL;
+        if (parent_type == GI_INFO_TYPE_OBJECT)
+          return g_object_info_get_method ((GIObjectInfo *) container, blob->sync_or_async_index);
+        else if (parent_type == GI_INFO_TYPE_INTERFACE)
+          return g_interface_info_get_method ((GIInterfaceInfo *) container,
+                                              blob->sync_or_async_index);
+        else
+          return NULL;
+      }
+    case GI_INFO_TYPE_CALLBACK:
+    case GI_INFO_TYPE_SIGNAL:
+      return FALSE;
+    default:
+      g_assert_not_reached ();
+    }
+}
+
+GICallableInfo *
+g_callable_info_get_finish_function (GICallableInfo *info)
+{
+  GIRealInfo *rinfo       = (GIRealInfo *) info;
+  GIBaseInfo *container   = rinfo->container;
+  GIInfoType  parent_type = g_base_info_get_type (container);
+
+  switch (rinfo->type)
+    {
+    case GI_INFO_TYPE_FUNCTION:
+      {
+        FunctionBlob *blob;
+        blob = (FunctionBlob *) &rinfo->typelib->data[rinfo->offset];
+
+        if (! blob->is_async)
+          return NULL;
+
+        if (blob->finish == ASYNC_SENTINEL)
+          return NULL;
+
+        if (! container)
+          return _g_info_from_entry (rinfo->repository, rinfo->typelib, blob->finish);
+        else if (parent_type == GI_INFO_TYPE_OBJECT)
+          return g_object_info_get_method ((GIObjectInfo *) container, blob->finish);
+        else if (parent_type == GI_INFO_TYPE_INTERFACE)
+          return g_interface_info_get_method ((GIInterfaceInfo *) container, blob->finish);
+        else
+          return NULL;
+      }
+    case GI_INFO_TYPE_VFUNC:
+      {
+        VFuncBlob *blob;
+        blob = (VFuncBlob *) &rinfo->typelib->data[rinfo->offset];
+        if (! blob->is_async)
+          return NULL;
+
+        if (blob->finish == ASYNC_SENTINEL)
+          return NULL;
+
+        if (parent_type == GI_INFO_TYPE_OBJECT)
+          return g_object_info_get_method ((GIObjectInfo *) container, blob->finish);
+        else if (parent_type == GI_INFO_TYPE_INTERFACE)
+          return g_interface_info_get_method ((GIInterfaceInfo *) container, blob->finish);
+        else
+          return NULL;
+      }
+    case GI_INFO_TYPE_CALLBACK:
+    case GI_INFO_TYPE_SIGNAL:
+      return FALSE;
+    default:
+      g_assert_not_reached ();
+    }
+}
+
+gboolean
+g_callable_info_is_async (GICallableInfo *info)
+{
+  GIRealInfo *rinfo = (GIRealInfo *) info;
+  switch (rinfo->type)
+    {
+    case GI_INFO_TYPE_FUNCTION:
+      {
+        FunctionBlob *blob;
+        blob = (FunctionBlob *) &rinfo->typelib->data[rinfo->offset];
+
+        return blob->is_async;
+      }
+    case GI_INFO_TYPE_VFUNC:
+      {
+        VFuncBlob *blob;
+        blob = (VFuncBlob *) &rinfo->typelib->data[rinfo->offset];
+        return blob->is_async;
+      case GI_INFO_TYPE_CALLBACK:
+      case GI_INFO_TYPE_SIGNAL:
+        return FALSE;
+      default:
+        g_assert_not_reached ();
+      }
+    }
+}
+
+/**
+ * g_callable_info_has_sync:
+ *
+ */
+gboolean
+g_callable_info_has_sync (GICallableInfo *info)
+{
+  return g_callable_info_get_sync_function (info) != NULL;
+}
+
+/**
+ * g_callable_info_has_async:
+ *
+ */
+gboolean
+g_callable_info_has_async (GICallableInfo *info)
+{
+  return g_callable_info_get_async_function (info) != NULL;
+}
+
+/**
+ * g_callable_info_has_finish:
+ *
+ */
+gboolean
+g_callable_info_has_finish (GICallableInfo *info)
+{
+  return g_callable_info_get_finish_function (info) != NULL;
+}

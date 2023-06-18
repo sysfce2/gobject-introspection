@@ -1699,9 +1699,83 @@ _g_ir_node_build_typelib (GIrNode         *node,
 	blob->wraps_vfunc = function->wraps_vfunc;
 	blob->throws = function->throws; /* Deprecated. Also stored in SignatureBlob. */
 	blob->index = 0;
+	blob->finish = 0;
+	blob->sync_or_async_index = 0;
 	blob->name = _g_ir_write_string (node->name, strings, data, offset2);
 	blob->symbol = _g_ir_write_string (function->symbol, strings, data, offset2);
 	blob->signature = signature;
+	blob->is_async = function->is_async;
+
+        if (function->is_async)
+          {
+
+            if (function->sync_func != NULL)
+              {
+                int sync_index = parent != NULL
+                               ? get_index_of_member_type ((GIrNodeInterface *) parent,
+                                                           G_IR_NODE_FUNCTION,
+                                                           function->sync_func)
+                               : find_entry (build, function->sync_func);
+
+                if (sync_index == -1)
+                  {
+                    g_error ("Unknown sync %s:%s for accessor %s",
+                             parent->name, function->sync_func,
+                             function->symbol);
+                  }
+
+                blob->sync_or_async_index = (guint)sync_index;
+              }
+            else
+              {
+                blob->sync_or_async_index = ASYNC_SENTINEL;
+              }
+
+            if (function->finish_func != NULL)
+              {
+                int finish_index = parent != NULL
+                                 ? get_index_of_member_type ((GIrNodeInterface *) parent,
+                                                             G_IR_NODE_FUNCTION,
+                                                             function->finish_func)
+                                 : find_entry (build, function->finish_func);
+
+                if (finish_index == -1)
+                  {
+                    g_error ("Unknown finish %s:%s for function %s",
+                             parent->name, function->finish_func,
+                             function->symbol);
+                  }
+
+                blob->finish = (guint)finish_index;
+              }
+            else
+              {
+                blob->finish = ASYNC_SENTINEL;
+              }
+          }
+        else
+          {
+            if (function->async_func != NULL)
+              {
+                int async_index = parent != NULL
+                                ? get_index_of_member_type ((GIrNodeInterface *) parent,
+                                                            G_IR_NODE_FUNCTION,
+                                                            function->async_func)
+                                : find_entry (build, function->async_func);
+
+                if (async_index == -1)
+                  {
+                    g_error ("Unknown async %s:%s for accessor %s",
+                             parent->name, function->symbol, function->symbol);
+                  }
+
+                blob->sync_or_async_index = (guint)async_index;
+              }
+            else
+              {
+                blob->sync_or_async_index = ASYNC_SENTINEL;
+              }
+          }
 
         if (function->is_setter || function->is_getter)
           {
@@ -1871,9 +1945,74 @@ _g_ir_node_build_typelib (GIrNode         *node,
 	blob->must_not_be_implemented = 0; /* FIXME */
 	blob->class_closure = 0; /* FIXME */
 	blob->throws = vfunc->throws; /* Deprecated. Also stored in SignatureBlob. */
-	blob->reserved = 0;
+	blob->is_async = vfunc->is_async;
 
-	if (vfunc->invoker)
+        if (vfunc->is_async)
+          {
+
+            if (vfunc->sync_func != NULL)
+              {
+                int sync_index =
+                  get_index_of_member_type ((GIrNodeInterface *) parent,
+                                            G_IR_NODE_VFUNC,
+                                            vfunc->sync_func);
+
+                if (sync_index == -1)
+                  {
+                    g_error ("Unknown sync %s:%s for accessor %s",
+                             parent->name, vfunc->sync_func, vfunc->invoker);
+                  }
+
+                blob->sync_or_async_index = (guint)sync_index;
+              }
+            else
+              {
+                blob->sync_or_async_index = ASYNC_SENTINEL;
+              }
+
+            if (vfunc->finish_func != NULL)
+              {
+                int finish_index =
+                  get_index_of_member_type ((GIrNodeInterface *) parent,
+                                            G_IR_NODE_VFUNC,
+                                            vfunc->finish_func);
+
+                if (finish_index == -1)
+                  {
+                    g_error ("Unknown finish %s:%s for function %s",
+                             parent->name, vfunc->finish_func, vfunc->invoker);
+                  }
+
+                blob->finish = (guint)finish_index;
+              }
+            else
+              {
+                blob->finish = ASYNC_SENTINEL;
+              }
+          }
+        else
+          {
+            if (vfunc->async_func != NULL)
+              {
+                int async_index =
+                  get_index_of_member_type ((GIrNodeInterface *) parent,
+                                            G_IR_NODE_VFUNC,
+                                            vfunc->async_func);
+                if (async_index == -1)
+                  {
+                    g_error ("Unknown async %s:%s for accessor %s",
+                             parent->name, vfunc->async_func, vfunc->invoker);
+                  }
+
+                blob->sync_or_async_index = (guint)async_index;
+              }
+            else
+              {
+                blob->sync_or_async_index = ASYNC_SENTINEL;
+              }
+          }
+
+        if (vfunc->invoker)
 	  {
 	    int index = get_index_of_member_type ((GIrNodeInterface*)parent, G_IR_NODE_FUNCTION, vfunc->invoker);
 	    if (index == -1)

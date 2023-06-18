@@ -103,6 +103,70 @@ gboolean               g_callable_info_invoke          (GICallableInfo   *info,
 GI_AVAILABLE_IN_1_42
 GITransfer             g_callable_info_get_instance_ownership_transfer (GICallableInfo *info);
 
+/**
+ * g_callable_info_get_async_function
+ * @info: a callable info structure
+ *
+ * Checks if the callable has an asynchronous version.
+ */
+GI_AVAILABLE_IN_1_78
+GICallableInfo *g_callable_info_get_async_function (GICallableInfo *info);
+
+/**
+ * g_callable_info_get_sync_function
+ * @info: a callable info structure
+ *
+ * Checks if the callable has a synchronous version.
+ */
+GI_AVAILABLE_IN_1_78
+GICallableInfo *g_callable_info_get_sync_function (GICallableInfo *info);
+
+/**
+ * g_callable_info_get_finish_function
+ * @info: a callable info structure
+ *
+ * Gets the info for an async function's corresponding finish function
+ */
+GI_AVAILABLE_IN_1_78
+GICallableInfo *g_callable_info_get_finish_function (GICallableInfo *info);
+
+/**
+ * g_callable_info_is_async
+ * @info: a callable info structure
+ *
+ * Returns whether a callable is "async". Async callables have a
+ * GAsyncReadyCallback parameter and user data.
+ */
+GI_AVAILABLE_IN_1_78
+gboolean g_callable_info_is_async (GICallableInfo *info);
+
+/**
+ * g_callable_info_has_sync
+ * @info: a callable info structure
+ *
+ * Returns whether a callable has a synchronous version.
+ */
+GI_AVAILABLE_IN_1_78
+gboolean g_callable_info_has_sync (GICallableInfo *info);
+
+/**
+ * g_callable_info_has_sync
+ * @info: a callable info structure
+ *
+ * Returns whether a callable has an asynchronous version.
+ */
+GI_AVAILABLE_IN_1_78
+gboolean g_callable_info_has_async (GICallableInfo *info);
+
+/**
+ * g_callable_info_has_finish
+ * @info: a callable info structure
+ *
+ * Returns whether a callable has a finish function.
+ */
+GI_AVAILABLE_IN_1_78
+gboolean g_callable_info_has_finish (GICallableInfo *info);
+
 G_END_DECLS
 
 
