@@ -4936,11 +4936,11 @@ regress_test_array_struct_in_none (RegressTestStructA *arr, gsize len)
  *
  */
 void
-regress_test_obj_function_async (RegressTestObj     *self,
-                                 int                 io_priority,
-                                 GCancellable       *cancellable,
-                                 GAsyncReadyCallback callback,
-                                 gpointer            user_data)
+regress_test_obj_function_async (RegressTestObj     *self G_GNUC_UNUSED,
+                                 int                 io_priority G_GNUC_UNUSED,
+                                 GCancellable       *cancellable G_GNUC_UNUSED,
+                                 GAsyncReadyCallback callback G_GNUC_UNUSED,
+                                 gpointer            user_data G_GNUC_UNUSED)
 {
 }
 
@@ -4949,7 +4949,7 @@ regress_test_obj_function_async (RegressTestObj     *self,
  *
  */
 gboolean
-regress_test_obj_function_finish (RegressTestObj *self, GAsyncResult *res, GError **error)
+regress_test_obj_function_finish (RegressTestObj *self G_GNUC_UNUSED, GAsyncResult *res G_GNUC_UNUSED, GError **error G_GNUC_UNUSED)
 {
   return TRUE;
 }
@@ -4959,11 +4959,7 @@ regress_test_obj_function_finish (RegressTestObj *self, GAsyncResult *res, GErro
  *
  */
 gboolean
-regress_test_obj_function_sync (RegressTestObj     *self,
-                                int                 io_priority,
-                                GCancellable       *cancellable,
-                                GAsyncReadyCallback callback,
-                                gpointer            user_data)
+regress_test_obj_function_sync (RegressTestObj *self G_GNUC_UNUSED, int io_priority G_GNUC_UNUSED)
 {
   return TRUE;
 }
