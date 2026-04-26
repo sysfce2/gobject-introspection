@@ -231,7 +231,11 @@ else
 endif
 
 foreach h : glib_headers
-  hstr = '@0@'.format(h)
+  if dep_type == 'internal'
+    hstr = h.full_path()
+  else
+    hstr = h
+  endif
   if not hstr.endswith('autocleanups.h')
     glib_files += h
   endif
@@ -307,7 +311,11 @@ else
 endif
 
 foreach h : gobject_headers
-  hstr = '@0@'.format(h)
+  if dep_type == 'internal'
+    hstr = h.full_path()
+  else
+    hstr = h
+  endif
   if not hstr.endswith('autocleanups.h') and not hstr.endswith('glib-types.h') and not hstr.endswith('gvaluecollector.h') and not hstr.endswith('glib-enumtypes.h')
     gobject_files += h
   endif
@@ -428,7 +436,11 @@ else
 endif
 
 foreach h : gio_headers
-  hstr = '@0@'.format(h)
+  if dep_type == 'internal'
+    hstr = h.full_path()
+  else
+    hstr = h
+  endif
   if not hstr.endswith('autocleanups.h')
     gio_files += h
   endif
@@ -454,7 +466,11 @@ if giounix_dep.found()
   # GIO Unix headers must be included explicitly since there is no catch-all
   # header that includes all of them unlike gio/gio.h above
   foreach header : giounix_headers
-    hstr = '@0@'.format(header)
+    if dep_type == 'internal'
+      hstr = h.full_path()
+    else
+      hstr = h
+    endif
     hbase = hstr.split('/')[-1]
     gio_command += '--c-include=gio/@0@'.format(hbase)
   endforeach
