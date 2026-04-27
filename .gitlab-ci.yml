@@ -54,7 +54,7 @@ fedora-x86_64-subprojects:
     CCACHE_BASEDIR: "${CI_PROJECT_DIR}"
     CCACHE_DIR: "${CI_PROJECT_DIR}/_ccache"
   script:
-    - meson setup --fatal-meson-warnings --buildtype=debug _build .
+    - meson setup --fatal-meson-warnings -Ddoctool=disabled -Dcairo=disabled --buildtype=debug _build .
     - .gitlab-ci/show-git-commits.sh || true
     - meson compile -C _build
     - meson test -C _build --print-errorlogs --suite=gobject-introspection
@@ -93,7 +93,7 @@ fedora-x86_64-python3.8:
     CCACHE_BASEDIR: "${CI_PROJECT_DIR}"
     CCACHE_DIR: "${CI_PROJECT_DIR}/_ccache"
     PYENV_VERSION: "3.8.17"
-    EXTRA_MESON_FLAGS: "--buildtype=debug"
+    EXTRA_MESON_FLAGS: "--buildtype=debug -Ddoctool=disabled"
   script:
     - meson setup ${COMMON_MESON_FLAGS} ${EXTRA_MESON_FLAGS} _build .
     - .gitlab-ci/show-git-commits.sh || true

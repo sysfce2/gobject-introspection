@@ -255,7 +255,12 @@ endif
 cairo_deps_found = cairo_gobject_dep.found() and cairo_dep.found()
 
 if not cairo_deps_found
-  warning('Not building with cairo support, not all tests will be run')
+  msg = 'Not building with cairo support, not all tests will be run'
+  if cairo_option.disabled()
+    message(msg)
+  else
+    warning(msg)
+  endif
 endif
 
 # doctool
@@ -277,7 +282,12 @@ else
 endif
 
 if not with_doctool
-  warning('Not building with doctool support, not all tests will be run')
+  msg = 'Not building with doctool support, not all tests will be run'
+  if doctool_option.disabled()
+    message(msg)
+  else
+    warning(msg)
+  endif
 endif
 
 fs = import('fs')
