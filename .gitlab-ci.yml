@@ -17,7 +17,7 @@ cache:
     - _ccache/
 
 variables:
-  COMMON_MESON_FLAGS: "--prefix /usr --libdir lib64 -Dglib:werror=false -Dcairo=enabled -Dpython=python3"
+  COMMON_MESON_FLAGS: "--prefix /usr --libdir lib64 -Dglib:werror=false -Dcairo=enabled -Dpython=python3 --fatal-meson-warnings"
 
 fedora-x86_64-meson:
   stage: build
@@ -54,7 +54,7 @@ fedora-x86_64-subprojects:
     CCACHE_BASEDIR: "${CI_PROJECT_DIR}"
     CCACHE_DIR: "${CI_PROJECT_DIR}/_ccache"
   script:
-    - meson setup --buildtype=debug _build .
+    - meson setup --fatal-meson-warnings --buildtype=debug _build .
     - .gitlab-ci/show-git-commits.sh || true
     - meson compile -C _build
     - meson test -C _build --print-errorlogs --suite=gobject-introspection

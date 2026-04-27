@@ -29,6 +29,7 @@ pip3 install --upgrade --user meson==1.4.2 flake8 mypy==0.931 types-Markdown
 export PATH="$HOME/.local/bin:$PATH"
 
 meson setup \
+        --fatal-meson-warnings \
         -Dwerror=true \
         -Dglib:werror=false \
         -Dcairo=enabled \
